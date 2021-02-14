@@ -5,45 +5,50 @@ TASK: milk2
 """
 import math
 
+def takeFirst(element):
+    return element[0]
+
 intervals = []
 
 with open('milk2.in', 'r') as fin:
     lines = fin.readlines()
 
     for i in range(1, len(lines)):
-        interval = map(int, lines[i].strip().split())
-        intervals.append(interval)
+        s, e = map(int, lines[i].strip().split())
+        intervals.append((s, e))
 
-maxTime -= 1
-count = [0] * (maxTime)
+intervals.sort(key=takeFirst)
+print(len(intervals))
+
+# practice merge intervals
+mergedIntervals = []
+currentInterval = intervals[0]
+for interval in intervals:
+    s, e = interval
+    if (s > currentInterval[1]):
+        mergedIntervals.append(currentInterval)
+        currentInterval = interval
+    elif (e > currentInterval[1]):
+        currentInterval = (currentInterval[0], e)
+
+mergedIntervals.append(currentInterval)
+print(len(mergedIntervals))
+print(mergedIntervals)
 
 longestMilkTime = 0
 longestNonMilkTime = 0
 
-print(minTime)
-print(maxTime)
-
-for i in range(len(startTimes)):
-    start = startTimes[i] - 1
-    end = endTimes[i] - 1
-    for j in range(start, end):
-        count[j] += 1
-
-i = minTime - 1
-while (i < maxTime):
-    milkTime = 0
-    while (i < maxTime and count[i] > 0):
-        milkTime += 1
-        i += 1
-    if (longestMilkTime < milkTime):
-        longestMilkTime = milkTime
-    
-    nonMilkTime = 0
-    while (i < maxTime and count[i] == 0):
-        nonMilkTime += 1
-        i += 1
-    if (longestNonMilkTime < nonMilkTime):
-        longestNonMilkTime = nonMilkTime
+# practice find max number in a list
+for i in range(len(mergedIntervals)):
+    interval = mergedIntervals[i]
+    currentMilkTime = interval[1] - interval[0]
+    if (currentMilkTime > longestMilkTime):
+        longestMilkTime = currentMilkTime
+    if (i < len(mergedIntervals) - 1):
+        nextInterval = mergedIntervals[i+1]
+        currentNonMilktime = nextInterval[0] - interval[1]
+        if (currentNonMilktime > longestNonMilkTime):
+            longestNonMilkTime = currentNonMilktime
 
 print(longestMilkTime)
 print(longestNonMilkTime)
